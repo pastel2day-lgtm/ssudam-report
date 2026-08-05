@@ -106,12 +106,12 @@ export default function LandingPage() {
           <img className="hero-brand-logo" src="assets/ssdam-logo.png" alt="서로를 포근히 안아주는 쓰담쓰담 로고" />
           <div className="hero-brand-name"><span className="brand-warm">쓰담</span><span className="brand-green">쓰담</span></div>
           <div className="hero-brand-tagline">마음을 알아차리는 다정한 시작</div>
-        <h1 className="hero-headline-warm fade-up d1" style={{ fontFamily: "'Pretendard', sans-serif", fontSize: '25px', fontWeight: '800', color: '#192A27', lineHeight: '1.4', letterSpacing: '-0.03em', marginBottom: '14px',  }}>
+        <h1 className="hero-headline-warm fade-up d1" style={{ fontFamily: "'Pretendard', sans-serif", fontSize: 'clamp(21px, 6vw, 26px)', fontWeight: '800', color: '#192A27', lineHeight: '1.4', letterSpacing: '-0.03em', marginBottom: '14px', wordBreak: 'keep-all' }}>
       늘 괜찮은 척 견뎌온 당신에게,<br/>
       <span style={{ color: '#14C8A7',  }}>든든한 내 편</span>이 되어 드릴게요
     </h1>
 
-    <p className="fade-up d2" style={{ fontSize: '14.5px', color: '#5C706D', lineHeight: '1.65', marginBottom: '26px',  }}>
+    <p className="fade-up d2" style={{ fontSize: 'clamp(13px, 4vw, 15px)', color: '#5C706D', lineHeight: '1.65', marginBottom: '26px', wordBreak: 'keep-all' }}>
       나도 몰랐던 무의식속 방어기제를 발견하고,<br/>
       실질적인 고민 해결을 위한 1:1 맞춤 케어 솔루션을 확인해보세요.
     </p>
