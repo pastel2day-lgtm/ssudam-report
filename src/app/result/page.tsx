@@ -96,8 +96,8 @@ export default function ResultPage() {
         {eptiResult ? (
           <>
             {/* Premium Hero Section */}
-            <div className="fade-up visible" style={{ background: 'linear-gradient(135deg, #0E221E 0%, #06110E 100%)', margin: '0 -20px 48px -20px', padding: '60px 24px 48px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '200px', height: '200px', background: 'var(--accent)', filter: 'blur(100px)', opacity: 0.35, borderRadius: '50%' }}>
+            <div className="fade-up visible" style={{ background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%)', margin: '0 -20px 48px -20px', padding: '60px 24px 48px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '200px', height: '200px', background: '#FFFFFF', filter: 'blur(100px)', opacity: 0.35, borderRadius: '50%' }}>
 
 </div>
               
