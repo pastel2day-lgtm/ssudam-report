@@ -1,14 +1,28 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSurvey } from '@/context/SurveyContext';
 
 import { EPTI_Q } from '@/utils/eptiData';
 
+const LOADING_MESSAGES = [
+  "답변을 종합하여 성향을 분석하고 있어요...",
+  "무의식 속에 숨겨진 방어기제를 찾고 있어요...",
+  "나만을 위한 맞춤형 심층 리포트를 작성하고 있어요..."
+];
+
 export default function LoadingPage() {
   const router = useRouter();
   const { data } = useSurvey();
+  const [msgIndex, setMsgIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMsgIndex(prev => (prev + 1) % LOADING_MESSAGES.length);
+    }, 1200);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     let eptiString = '';
@@ -54,10 +68,10 @@ export default function LoadingPage() {
     };
 
     submitToGoogleSheets().finally(() => {
-      // Simulate minimum loading time for UX (at least 2.5s)
+      // Simulate minimum loading time for UX (at least 3.6s to show all messages)
       setTimeout(() => {
         router.push('/result');
-      }, 2500);
+      }, 3600);
     });
     
   }, [router, data]);
@@ -67,7 +81,9 @@ export default function LoadingPage() {
       <div style={{ textAlign: 'center', width: '100%', padding: '0 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div id="loading-spinner-wrap" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40vh' }}>
           <div className="loader-ring"></div>
-          <p className="loader-text" id="loader-msg">진단서를 작성하는 중...</p>
+          <p className="loader-text" id="loader-msg" style={{ transition: 'opacity 0.3s ease-in-out' }}>
+            {LOADING_MESSAGES[msgIndex]}
+          </p>
         </div>
       </div>
     </div>
