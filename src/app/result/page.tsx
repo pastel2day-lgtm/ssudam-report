@@ -17,6 +17,42 @@ export default function ResultPage() {
   const [showPlus, setShowPlus] = useState(false);
   const PLUS_URL = process.env.NEXT_PUBLIC_PLUS_URL || '#';
 
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [applyForm, setApplyForm] = useState({ name: '', phone: '', email: '', consent: false });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleApplySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!applyForm.name || !applyForm.phone || !applyForm.email || !applyForm.consent) {
+      alert('모든 필수 항목을 입력하고 동의해주세요.');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(applyForm),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setSubmitSuccess(true);
+        setTimeout(() => {
+          setShowApplyModal(false);
+          setSubmitSuccess(false);
+        }, 3000);
+      } else {
+        alert(data.error || '신청 중 오류가 발생했습니다.');
+      }
+    } catch (err) {
+      alert('네트워크 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     
@@ -61,7 +97,63 @@ export default function ResultPage() {
           <>
             {/* Premium Hero Section */}
             <div className="fade-up visible" style={{ background: 'linear-gradient(135deg, #0E221E 0%, #06110E 100%)', margin: '0 -20px 48px -20px', padding: '60px 24px 48px', color: '#fff', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '200px', height: '200px', background: 'var(--accent)', filter: 'blur(100px)', opacity: 0.35, borderRadius: '50%' }}></div>
+              <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '200px', height: '200px', background: 'var(--accent)', filter: 'blur(100px)', opacity: 0.35, borderRadius: '50%' }}>
+      {/* Apply Modal */}
+      {showApplyModal && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 1200, background: 'rgba(25,31,40,0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+        >
+          <div style={{ width: '100%', maxWidth: '400px', background: '#FFFFFF', borderRadius: '24px', padding: '32px 24px', boxShadow: '0 12px 60px rgba(0,0,0,0.1)' }}>
+            
+            {submitSuccess ? (
+              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                <div style={{ fontSize: '40px', marginBottom: '16px' }}>🎉</div>
+                <h3 style={{ fontSize: '20px', fontWeight: '900', color: '#191F28', marginBottom: '12px' }}>신청이 완료되었습니다!</h3>
+                <p style={{ fontSize: '14px', color: '#4E5968', lineHeight: '1.6', wordBreak: 'keep-all' }}>담당자가 확인 후 빠르게 연락드리겠습니다.<br/>감사합니다.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleApplySubmit}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: '900', color: '#191F28', margin: 0 }}>전문가 1:1 상담 신청</h3>
+                  <button type="button" onClick={() => setShowApplyModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', color: '#8B95A1', cursor: 'pointer', padding: '4px' }}>✕</button>
+                </div>
+                
+                <p style={{ fontSize: '14px', color: '#4E5968', marginBottom: '24px', lineHeight: '1.5' }}>
+                  심층 진단서를 바탕으로 전문가와 대화하며, 삶의 구체적인 개선 방향을 설계해보세요.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '28px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#333D4B', marginBottom: '8px' }}>이름</label>
+                    <input type="text" value={applyForm.name} onChange={e => setApplyForm({...applyForm, name: e.target.value})} placeholder="홍길동" required style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #E5E8EB', fontSize: '15px', outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#333D4B', marginBottom: '8px' }}>연락처</label>
+                    <input type="tel" value={applyForm.phone} onChange={e => setApplyForm({...applyForm, phone: e.target.value})} placeholder="010-1234-5678" required style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #E5E8EB', fontSize: '15px', outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#333D4B', marginBottom: '8px' }}>이메일</label>
+                    <input type="email" value={applyForm.email} onChange={e => setApplyForm({...applyForm, email: e.target.value})} placeholder="example@email.com" required style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #E5E8EB', fontSize: '15px', outline: 'none' }} />
+                  </div>
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '8px', cursor: 'pointer' }}>
+                    <input type="checkbox" checked={applyForm.consent} onChange={e => setApplyForm({...applyForm, consent: e.target.checked})} required style={{ marginTop: '2px', accentColor: 'var(--accent)' }} />
+                    <span style={{ fontSize: '13px', color: '#4E5968', lineHeight: '1.5' }}>[필수] 개인정보 수집 및 이용에 동의합니다. 수집된 정보는 상담 진행 목적으로만 사용됩니다.</span>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{ width: '100%', padding: '16px', border: 'none', borderRadius: '14px', background: isSubmitting ? '#A0AAB5' : '#191F28', color: '#fff', fontSize: '16px', fontWeight: '800', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
+                >
+                  {isSubmitting ? '신청 처리 중...' : '신청 완료하기'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+</div>
               
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', position: 'relative', zIndex: 1 }}>
                 <button onClick={handleRestart} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '13px', padding: '8px 14px', borderRadius: '100px', cursor: 'pointer', backdropFilter: 'blur(4px)' }}>
@@ -306,7 +398,7 @@ export default function ResultPage() {
                 임상심리전문가가 진단서를 바탕으로 <strong style={{ color: '#191F28' }}>맞춤 대화</strong>로 이어드려요.
               </p>
               <button
-                onClick={() => { window.location.href = PLUS_URL; }}
+                onClick={() => setShowApplyModal(true)}
                 style={{ width: '100%', padding: '16px', border: 'none', borderRadius: '16px', background: '#191F28', color: '#fff', fontSize: '16px', fontWeight: '800', cursor: 'pointer', letterSpacing: '-0.01em' }}
               >
                 1:1 상담 신청하기
@@ -376,6 +468,62 @@ export default function ResultPage() {
           </div>
         </div>
       )}
-    </div>
+    
+      {/* Apply Modal */}
+      {showApplyModal && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 1200, background: 'rgba(25,31,40,0.6)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+        >
+          <div style={{ width: '100%', maxWidth: '400px', background: '#FFFFFF', borderRadius: '24px', padding: '32px 24px', boxShadow: '0 12px 60px rgba(0,0,0,0.1)' }}>
+            
+            {submitSuccess ? (
+              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                <div style={{ fontSize: '40px', marginBottom: '16px' }}>🎉</div>
+                <h3 style={{ fontSize: '20px', fontWeight: '900', color: '#191F28', marginBottom: '12px' }}>신청이 완료되었습니다!</h3>
+                <p style={{ fontSize: '14px', color: '#4E5968', lineHeight: '1.6', wordBreak: 'keep-all' }}>담당자가 확인 후 빠르게 연락드리겠습니다.<br/>감사합니다.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleApplySubmit}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: '900', color: '#191F28', margin: 0 }}>전문가 1:1 상담 신청</h3>
+                  <button type="button" onClick={() => setShowApplyModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', color: '#8B95A1', cursor: 'pointer', padding: '4px' }}>✕</button>
+                </div>
+                
+                <p style={{ fontSize: '14px', color: '#4E5968', marginBottom: '24px', lineHeight: '1.5' }}>
+                  심층 진단서를 바탕으로 전문가와 대화하며, 삶의 구체적인 개선 방향을 설계해보세요.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '28px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#333D4B', marginBottom: '8px' }}>이름</label>
+                    <input type="text" value={applyForm.name} onChange={e => setApplyForm({...applyForm, name: e.target.value})} placeholder="홍길동" required style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #E5E8EB', fontSize: '15px', outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#333D4B', marginBottom: '8px' }}>연락처</label>
+                    <input type="tel" value={applyForm.phone} onChange={e => setApplyForm({...applyForm, phone: e.target.value})} placeholder="010-1234-5678" required style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #E5E8EB', fontSize: '15px', outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: '700', color: '#333D4B', marginBottom: '8px' }}>이메일</label>
+                    <input type="email" value={applyForm.email} onChange={e => setApplyForm({...applyForm, email: e.target.value})} placeholder="example@email.com" required style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #E5E8EB', fontSize: '15px', outline: 'none' }} />
+                  </div>
+                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginTop: '8px', cursor: 'pointer' }}>
+                    <input type="checkbox" checked={applyForm.consent} onChange={e => setApplyForm({...applyForm, consent: e.target.checked})} required style={{ marginTop: '2px', accentColor: 'var(--accent)' }} />
+                    <span style={{ fontSize: '13px', color: '#4E5968', lineHeight: '1.5' }}>[필수] 개인정보 수집 및 이용에 동의합니다. 수집된 정보는 상담 진행 목적으로만 사용됩니다.</span>
+                  </label>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{ width: '100%', padding: '16px', border: 'none', borderRadius: '14px', background: isSubmitting ? '#A0AAB5' : '#191F28', color: '#fff', fontSize: '16px', fontWeight: '800', cursor: isSubmitting ? 'not-allowed' : 'pointer', transition: 'background 0.2s' }}
+                >
+                  {isSubmitting ? '신청 처리 중...' : '신청 완료하기'}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+</div>
   );
 }
