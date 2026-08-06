@@ -55,17 +55,18 @@ export default function LoadingPage() {
       const url = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
       if (url) {
         try {
+          const formData = new URLSearchParams();
+          formData.append('q0', data.track || '');
+          formData.append('q1', data.q1 || '');
+          formData.append('q2', data.q2 || '');
+          formData.append('q3', data.q3 || '');
+          formData.append('epti', eptiString || '');
+
           await fetch(url, {
             method: 'POST',
             mode: 'no-cors', // Ignore CORS response 
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              q0: data.track,
-              q1: data.q1,
-              q2: data.q2,
-              q3: data.q3,
-              epti: eptiString
-            }),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
           });
         } catch (e) {
           console.error('Failed to submit to Google Sheets:', e);
