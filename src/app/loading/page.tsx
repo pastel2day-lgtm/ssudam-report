@@ -62,11 +62,9 @@ export default function LoadingPage() {
           formData.append('q3', data.q3 || '');
           formData.append('epti', eptiString || '');
 
-          await fetch(url, {
-            method: 'POST',
-            mode: 'no-cors', // Ignore CORS response 
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString()
+          await fetch(`${url}?${formData.toString()}`, {
+            method: 'GET',
+            mode: 'no-cors'
           });
         } catch (e) {
           console.error('Failed to submit to Google Sheets:', e);

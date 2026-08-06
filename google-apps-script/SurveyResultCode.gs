@@ -18,13 +18,26 @@ var SHEET_NAME = '진단결과';
 
 var HEADERS = ['접수일시', '트랙(Q0)', '심리반응(Q1)', '현재상태(Q2)', '고민(Q3)', 'EPTI_결과'];
 
-function doPost(e) {
-  try {
-    if (!e || !e.postData || !e.postData.contents) {
-      return jsonOut({ ok: false, error: 'empty body' });
-    }
+function doGet(e) {
+  return handleRequest(e);
+}
 
-    var body = JSON.parse(e.postData.contents);
+function doPost(e) {
+  return handleRequest(e);
+}
+
+function handleRequest(e) {
+  try {
+    var body = e.parameter || {};
+    
+    // For fallback JSON parsing
+    if (e.postData && e.postData.contents && e.postData.contents.startsWith('{')) {
+      try {
+        body = JSON.parse(e.postData.contents);
+      } catch (err) {
+        // ignore
+      }
+    }
 
     var sheet = getSheet_();
 
