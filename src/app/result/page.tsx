@@ -49,15 +49,15 @@ export default function ResultPage() {
           epti: eptiString
         }),
       });
-      const data = await res.json();
-      if (data.ok) {
+      const resultData = await res.json();
+      if (resultData.ok) {
         setSubmitSuccess(true);
         setTimeout(() => {
           setShowApplyModal(false);
           setSubmitSuccess(false);
         }, 3000);
       } else {
-        alert(data.error || '신청 중 오류가 발생했습니다.');
+        alert(resultData.error || '신청 중 오류가 발생했습니다.');
       }
     } catch (err) {
       alert('네트워크 오류가 발생했습니다.');
