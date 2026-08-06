@@ -61,6 +61,7 @@ export default function LoadingPage() {
           formData.append('q2', data.q2 || '');
           formData.append('q3', data.q3 || '');
           formData.append('epti', eptiString || '');
+          formData.append('sessionId', data.sessionId || '');
 
           await fetch(`${url}?${formData.toString()}`, {
             method: 'GET',
@@ -73,10 +74,10 @@ export default function LoadingPage() {
     };
 
     submitToGoogleSheets().finally(() => {
-      // Temporarily increased loading time to 15 seconds so user can take a screenshot
+      // Simulate minimum loading time for UX (at least 3.6s to show all messages)
       setTimeout(() => {
         router.push('/result');
-      }, 15000);
+      }, 3600);
     });
     
   }, [router, data]);
@@ -84,19 +85,11 @@ export default function LoadingPage() {
   return (
     <div id="s-loading" className="screen active">
       <div style={{ textAlign: 'center', width: '100%', padding: '0 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div id="loading-spinner-wrap" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '30vh' }}>
+        <div id="loading-spinner-wrap" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '40vh' }}>
           <div className="loader-ring"></div>
           <p className="loader-text" id="loader-msg" style={{ transition: 'opacity 0.3s ease-in-out' }}>
             {LOADING_MESSAGES[msgIndex]}
           </p>
-        </div>
-
-        {/* DEBUG BOX */}
-        <div style={{ marginTop: '50px', padding: '20px', background: '#ffebee', borderRadius: '10px', fontSize: '11px', textAlign: 'left', wordBreak: 'break-all', color: '#c62828', border: '1px solid #ef9a9a', maxWidth: '100%' }}>
-          <strong>[디버그 모드 - 15초 뒤 자동으로 넘어갑니다]</strong><br/>
-          이 화면을 캡처해서 보여주세요!<br/><br/>
-          <strong>전송 데이터:</strong> {`q0=${data.track}&q1=${data.q1}&q2=${data.q2}&q3=${data.q3}`}<br/>
-          <strong>전송 URL:</strong> {process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL}
         </div>
       </div>
     </div>

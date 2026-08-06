@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, phone, email, consent } = body;
+    const { name, phone, email, consent, sessionId, track, q1, q2, q3, epti } = body;
 
-    const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+    const webhookUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
     const secret = process.env.SHEET_SHARED_SECRET;
 
     if (!webhookUrl) {
-      console.error('Missing GOOGLE_SHEET_WEBHOOK_URL');
+      console.error('Missing NEXT_PUBLIC_GOOGLE_SHEET_URL');
       return NextResponse.json(
         { ok: false, error: '서버 설정 오류: Webhook URL이 없습니다.' },
         { status: 500 }
@@ -29,6 +29,12 @@ export async function POST(request: Request) {
         email: email || '',
         consent: consent || '',
         referrer: 'ssudam-report (Next.js)',
+        sessionId: sessionId || '',
+        q0: track || '',
+        q1: q1 || '',
+        q2: q2 || '',
+        q3: q3 || '',
+        epti: epti || ''
       }),
     });
 

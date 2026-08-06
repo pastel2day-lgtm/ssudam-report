@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface SurveyData {
   track: string;
@@ -8,6 +8,7 @@ interface SurveyData {
   q2: string;
   q3: string;
   eptiAnswers: Record<number, number>;
+  sessionId?: string;
 }
 
 interface SurveyContextType {
@@ -22,12 +23,20 @@ const defaultData: SurveyData = {
   q2: '',
   q3: '',
   eptiAnswers: {},
+  sessionId: '', // Will be set on client side
 };
 
 const SurveyContext = createContext<SurveyContextType | undefined>(undefined);
 
 export function SurveyProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<SurveyData>(defaultData);
+
+  useEffect(() => {
+    setData((prev) => ({
+      ...prev,
+      sessionId: Date.now().toString() + '-' + Math.floor(Math.random() * 10000)
+    }));
+  }, []);
 
   const updateData = (key: keyof SurveyData, value: string | Record<number, number>) => {
     setData((prev) => ({

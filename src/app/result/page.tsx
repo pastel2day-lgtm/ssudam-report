@@ -31,10 +31,23 @@ export default function ResultPage() {
     
     setIsSubmitting(true);
     try {
+      const eptiString = Object.keys(typeScores).length > 0 
+        ? Object.entries(typeScores).map(([type, score]) => ({ type: Number(type), score })).sort((a, b) => b.score - a.score).map(t => t.type).join(' > ')
+        : '';
+
       const res = await fetch('/api/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...applyForm, phone: applyForm.phone.replace(/-/g, '') }),
+        body: JSON.stringify({ 
+          ...applyForm, 
+          phone: applyForm.phone.replace(/-/g, ''),
+          sessionId: data.sessionId,
+          track: data.track,
+          q1: data.q1,
+          q2: data.q2,
+          q3: data.q3,
+          epti: eptiString
+        }),
       });
       const data = await res.json();
       if (data.ok) {
