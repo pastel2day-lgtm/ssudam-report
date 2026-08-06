@@ -46,6 +46,12 @@ export default function LoadingPage() {
     }
 
     const submitToGoogleSheets = async () => {
+      // 데이터가 없으면 전송하지 않음 (새로고침 방어)
+      if (!data.track && !data.q1 && !data.q2 && !data.q3) {
+        console.warn('No survey data to submit');
+        return;
+      }
+
       const url = process.env.NEXT_PUBLIC_GOOGLE_SHEET_URL;
       if (url) {
         try {
